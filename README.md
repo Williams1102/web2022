@@ -1,19 +1,27 @@
 
 ## Commands
 Running locally:
+
 ```bash
 yarn dev
 ```
+
 building:
+
 ```bash
+
 yarn build
 ```
+
 Running production (build before use):
+
 ```bash
+
 yarn start
 ```
 
 Testing:
+
 ```bash
 # run all unit tests
 yarn test
@@ -31,7 +39,8 @@ yarn test:e2e
 yarn test:e2e:watch
 ```
 
-## Enviroment Variable
+## Environment Variable
+
 The environment variables can be found and modified in the  `.env`  file. They come with these default values:
 
 ```bash
