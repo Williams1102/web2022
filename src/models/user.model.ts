@@ -5,28 +5,42 @@ import { JWT_EXPIRE, JWT_SECRET } from '@/config/config'
 import uniqueValidator from 'mongoose-unique-validator'
 import privateValidator from 'mongoose-private'
 
-export interface IUser {
+export interface IUser
+{
   first_name: string
   last_name: string
   email: string
   hash_password: string
   salt: string
+  role: 'Admin' | 'User'
+  address: string
+  phone: number
 }
 
-export interface IUserToAuthJSON {
+export interface IUserToAuthJSON
+{
   first_name: string
   last_name: string
   name: string
   email: string
 }
 
-export default interface IUserModel extends Document, IUser {
-  setPassword(password: string): void
-  validPassword(password: string): boolean
+export default interface IUserModel extends Document, IUser
+{
+  setPassword( password: string ): void
+  validPassword( password: string ): boolean
   toAuthJSON(): IUserToAuthJSON
   generateJWT(): string
   generateAccessJWT(): string
   name: string
+}
+
+export interface IUserJwt
+{
+  id: string
+  name: string
+  email: string
+  role: 'Admin' | 'User'
 }
 
 const schema = new Schema<IUserModel>(
@@ -53,6 +67,16 @@ const schema = new Schema<IUserModel>(
       type: String,
       private: true,
     },
+    role: {
+      type: String,
+      required: true
+    },
+    address: {
+      type: String,
+    },
+    phone: {
+      type: String,
+    }
   },
   {
     timestamps: true,
@@ -60,29 +84,34 @@ const schema = new Schema<IUserModel>(
 )
 
 // Plugins
-schema.plugin(uniqueValidator)
-schema.plugin(privateValidator)
+schema.plugin( uniqueValidator )
+schema.plugin( privateValidator )
 
-schema.virtual('name').get(function (this: IUserModel) {
+schema.virtual( 'name' ).get( function ( this: IUserModel )
+{
   return `${this.first_name} ${this.last_name}`
-})
+} )
 
-schema.methods.setPassword = function (password: string) {
-  this.salt = crypto.randomBytes(16).toString('hex')
-  this.hash_password = crypto.pbkdf2Sync(password, this.salt, 10000, 512, 'sha512').toString('hex')
+schema.methods.setPassword = function ( password: string )
+{
+  this.salt = crypto.randomBytes( 16 ).toString( 'hex' )
+  this.hash_password = crypto.pbkdf2Sync( password, this.salt, 10000, 512, 'sha512' ).toString( 'hex' )
 }
 
-schema.methods.validPassword = function (password: string): boolean {
-  const hash = crypto.pbkdf2Sync(password, this.salt, 10000, 512, 'sha512').toString('hex')
+schema.methods.validPassword = function ( password: string ): boolean
+{
+  const hash = crypto.pbkdf2Sync( password, this.salt, 10000, 512, 'sha512' ).toString( 'hex' )
   return this.hash_password === hash
 }
 
-schema.methods.generateJWT = function (): string {
+schema.methods.generateJWT = function (): string
+{
   return jwt.sign(
     {
       id: this._id,
       name: this.name,
       email: this.email,
+      role: this.role
     },
     JWT_SECRET,
     {
@@ -91,7 +120,8 @@ schema.methods.generateJWT = function (): string {
   )
 }
 
-schema.methods.toAuthJSON = function () {
+schema.methods.toAuthJSON = function ()
+{
   const { first_name, last_name, name, email } = this
   return {
     name,
@@ -102,4 +132,4 @@ schema.methods.toAuthJSON = function () {
   }
 }
 
-export const User = model<IUserModel>('User', schema)
+export const User = model<IUserModel>( 'User', schema )
