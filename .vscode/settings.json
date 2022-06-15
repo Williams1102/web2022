@@ -1,0 +1,7 @@
+{
+	"reactSnippets.settings.prettierEnabled": true,
+	"prettier.enableDebugLogs": true,
+	"prettier.singleQuote": false,
+	"prettier.jsxBracketSameLine": true,
+	"prettier.jsxSingleQuote": true
+}

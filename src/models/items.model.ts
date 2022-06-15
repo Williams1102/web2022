@@ -1,14 +1,17 @@
-import { Schema, Document, model } from 'mongoose'
+import { Document, model, Schema, Types } from 'mongoose'
+import { ModelName } from './models.shared'
+import { Categories } from './categories.model'
+import ICategoriesModel from './categories.model'
 
-export interface IItems
-{
+export interface IItems {
   name: string
   description: string
   image: string
   price: number
+  category: Types.ObjectId
 }
 
-export default interface IItemModel extends Document, IItems { }
+export default interface IItemModel extends Document, IItems {}
 
 const schema = new Schema(
   {
@@ -16,6 +19,7 @@ const schema = new Schema(
       type: String,
       required: true,
       minlength: 3,
+      unique: true,
     },
     description: {
       type: String,
@@ -28,17 +32,16 @@ const schema = new Schema(
     },
     price: {
       type: String,
-      require: true
+      require: true,
     },
     category: {
       type: Schema.Types.ObjectId,
-      ref: "Categories",
-      require: true
-    }
+      ref: 'Categories',
+    },
   },
   {
     timestamps: true,
   },
 )
 
-export const Items = model<IItemModel>( 'Items', schema )
+export const Items = model<IItemModel>(ModelName.Item, schema)

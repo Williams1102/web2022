@@ -1,15 +1,15 @@
 import { Schema, Document, model } from 'mongoose'
 import { number } from 'zod'
+import { ModelName } from './models.shared'
 
-export interface IOrder
-{
+export interface IOrder {
   code: string
   address: string
   userId: string
   total: number
 }
 
-export default interface IOrderModel extends Document, IOrder { }
+export default interface IOrderModel extends Document, IOrder {}
 
 const orderSchema = new Schema(
   {
@@ -25,19 +25,18 @@ const orderSchema = new Schema(
     },
     userId: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       required: true,
     },
     total: {
       type: Number,
       require: true,
-      default: 0
+      default: 0,
     },
-
   },
   {
     timestamps: true,
   },
 )
 
-export const Orders = model<IOrderModel>( 'Orders', orderSchema )
+export const Orders = model<IOrderModel>(ModelName.Order, orderSchema)

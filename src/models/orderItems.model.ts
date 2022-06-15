@@ -1,38 +1,37 @@
 import { Schema, Document, model } from 'mongoose'
 import { number } from 'zod'
+import { ModelName } from './models.shared'
 
-export interface IOrderItem
-{
+export interface IOrderItem {
   itemId: string
   orderId: string
   quantity: number
 }
 
-export default interface IOrderItemModel extends Document, IOrderItem { }
+export default interface IOrderItemModel extends Document, IOrderItem {}
 
 const orderItemSchema = new Schema(
   {
     orderId: {
       type: Schema.Types.ObjectId,
-      ref: "Orders",
+      ref: 'Orders',
 
-      require: true
+      require: true,
     },
     itemId: {
       type: Schema.Types.ObjectId,
-      ref: "Items",
-      require: true
+      ref: 'Items',
+      require: true,
     },
     quantity: {
       type: Number,
       require: true,
-      default: 1
-    }
-
+      default: 1,
+    },
   },
   {
     timestamps: true,
   },
 )
 
-export const OrderItems = model<IOrderItemModel>( 'OrderItems', orderItemSchema )
+export const OrderItems = model<IOrderItemModel>(ModelName.OrderItem, orderItemSchema)

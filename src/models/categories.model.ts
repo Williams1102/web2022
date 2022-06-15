@@ -1,11 +1,11 @@
 import { Schema, Document, model } from 'mongoose'
+import { ModelName } from './models.shared'
 
-export interface ICategory
-{
+export interface ICategory {
   name: string
 }
 
-export default interface ICategoriesModel extends Document, ICategory { }
+export default interface ICategoriesModel extends Document, ICategory {}
 
 const schema = new Schema(
   {
@@ -20,4 +20,4 @@ const schema = new Schema(
   },
 )
 
-export const Categories = model<ICategoriesModel>( 'Categories', schema )
+export const Categories = model<ICategoriesModel>(ModelName.Category, schema)
