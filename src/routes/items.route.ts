@@ -25,33 +25,38 @@ const InputItemsDTO = z.object({
   category: z.string(),
 })
 
-router.post('/admin/add', authenticate(['jwt'], { session: false }), upload.single('file'), async (req, res, next) => {
-  try {
-    const body = InputItemsDTO.parse(req.body)
-    const user = req?.user as IUserJwt
-    if (user.role !== 'Admin')
-      return res.status(400).json({
-        message: 'Role must be Admin',
-      })
+router.post(
+  '/admin/add',
+  authenticate(['jwt'], { session: false }),
+  upload.single('file'),
+  async (req, res, next) => {
+    try {
+      const body = InputItemsDTO.parse(req.body)
+      const user = req?.user as IUserJwt
+      if (user.role !== 'Admin')
+        return res.status(400).json({
+          message: 'Role must be Admin',
+        })
 
-    if (!req.file) {
-      res.status(401).json({ error: 'Please provide an image' })
+      if (!req.file) {
+        res.status(401).json({ error: 'Please provide an image' })
+      }
+
+      const imagePath = path.join(root.path, 'src/public/images')
+      const img = new Resize(imagePath)
+      const filename = await img.save(req.file.buffer)
+      body.image = filename
+      body.price = +body.priceString
+      const itemDb = new Items(body)
+
+      await itemDb.save()
+
+      res.json(itemDb)
+    } catch (e) {
+      next(e)
     }
-
-    const imagePath = path.join(root.path, 'src/public/images')
-    const img = new Resize(imagePath)
-    const filename = await img.save(req.file.buffer)
-    body.image = filename
-    body.price = +body.priceString
-    const itemDb = new Items(body)
-
-    await itemDb.save()
-
-    res.json(itemDb)
-  } catch (e) {
-    next(e)
-  }
-})
+  },
+)
 
 const QueryList = z.object({
   search: z.string().optional(),
@@ -77,10 +82,14 @@ router.get('/', async (req, res, next) => {
 
       let itemId
       if (checkForHexRegExp.test(q?.search))
-        itemId = await Items.findOne({ _id: q?.search }).populate('category', 'name').orFail().lean()
+        itemId = await Items.findOne({ _id: q?.search })
+          .populate('category', 'name')
+          .orFail()
+          .lean()
 
       if (itemId) listItems = [itemId, ...listItems]
     } else listItems = await Items.find().populate('category', 'name').orFail().lean()
+    console.log('🚀 ~ file: items.route.ts ~ line 92 ~ router.get ~  listItems ', listItems)
 
     if (!listItems) throw new ApiError(httpStatus.NOT_FOUND, 'Item not found')
 
@@ -93,7 +102,7 @@ router.get('/:id', async (req, res, next) => {
   try {
     const { id } = req.params
     console.log('🚀 ~ file: items.route.ts ~ line 90 ~ router.get ~  id', id)
-    const listItems = await Items.findOne({}).populate('category', 'name').orFail()
+    const listItems = await Items.findOne({ _id: id }).populate('category', 'name').lean()
     console.log('🚀 ~ file: items.route.ts ~ line 91 ~ router.get ~ listItems', listItems)
 
     if (!listItems) throw new ApiError(httpStatus.NOT_FOUND, 'Item not found')

@@ -3,7 +3,7 @@ import { number } from 'zod'
 import { ModelName } from './models.shared'
 
 export interface IOrder {
-  code: string
+  status: 'Waiting' | 'Cancel' | 'Done'
   address: string
   userId: string
   total: number
@@ -13,10 +13,11 @@ export default interface IOrderModel extends Document, IOrder {}
 
 const orderSchema = new Schema(
   {
-    code: {
+    status: {
       type: String,
       required: true,
-      minlength: 3,
+      enum: ['Waiting', 'Cancel', 'Done'],
+      default: 'Waiting',
     },
     address: {
       type: String,
