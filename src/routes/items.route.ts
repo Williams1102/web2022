@@ -45,7 +45,7 @@ router.post(
       const imagePath = path.join(root.path, 'src/public/images')
       const img = new Resize(imagePath)
       const filename = await img.save(req.file.buffer)
-      body.image = filename
+      body.image = '/images/' + filename
       body.price = +body.priceString
       const itemDb = new Items(body)
 
@@ -93,7 +93,7 @@ router.get('/', async (req, res, next) => {
 
     if (!listItems) throw new ApiError(httpStatus.NOT_FOUND, 'Item not found')
 
-    res.json(listItems.map((o) => ({ ...o, image: '/images/' + o.image })))
+    res.json(listItems.map((o) => ({ ...o, image: o.image })))
   } catch (e) {
     next(e)
   }

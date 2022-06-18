@@ -21,6 +21,11 @@ const router = express.Router()
 router.post('/login', async (req, res, next) => {
   try {
     const { email, password } = req.body
+    console.log(
+      '🚀 ~ file: auth.route.ts ~ line 24 ~ router.post ~  email, password',
+      email,
+      password,
+    )
     const user = await User.findOne({ email })
     if (!user || !user.validPassword(password))
       throw new ApiError(httpStatus.UNPROCESSABLE_ENTITY, 'Invalid email or password')

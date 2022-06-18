@@ -33,7 +33,7 @@ app.use(express.json())
 
 // parse urlencoded request body
 app.use(express.urlencoded({ extended: true }))
-app.use(express.static('src/public'));
+app.use(express.static('src/public'))
 
 // sanitize request data
 // app.use(xss())
@@ -42,7 +42,7 @@ app.use(mongoSanitize())
 // gzip compression
 app.use(compression())
 
-app.use(cors())
+app.use(cors({ origin: 'http://localhost:3000', optionsSuccessStatus: 200 }))
 
 app.get('/', (_req, res) => {
   res.send('Healthy')

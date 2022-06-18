@@ -40,6 +40,7 @@ router.post('/', authenticate(['jwt'], { session: false }), async (req, res, nex
         itemId: body.itemId,
       }
       const exist = carts.find((o) => o.itemId.toString() === newItemsInCart.itemId.toString())
+
       console.log('🚀 ~ file: cart.route.ts ~ line 37 ~ router.post ~ exist', { carts, exist })
 
       if (body?.status) {
